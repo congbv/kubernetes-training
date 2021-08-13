@@ -24,6 +24,7 @@
 - Kubernetes Features
     - [Autoscaler HPA with custom metrics](autoscaler/hpa/custom-metrics)
     - [amazon-eks-workshop](eksworkshop)
+    - [Namespace](kubernetes-features/namespace)
 - Kubernetes Extentions
     - [kubernetes-operator](kubernetes-operator)
     - plugins
