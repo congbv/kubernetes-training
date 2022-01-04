@@ -1,0 +1,52 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+	"time"
+
+	"github.com/beevik/ntp"
+)
+
+const (
+	privateKey = "e2c97882818f586982d99401de5a68c8e6e1e3abfaf0b61ce1a"
+	//TIME_TO_UNLOCK ok
+	timeToUnlock     = "2021-05-27T10:30:00+07:00" //ngay va gio unlock
+	matKhauMoKey     = "Anhcong@1102"              //Mat khau cap 1 neu mo dung thoi gian
+	matKhauMoKeyCap2 = "Anhkeng@1102"              // Mo som thi cho 2 thang va nhap mat khau cap 2
+)
+
+func main() {
+
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Nhap mat khau: ")
+	matkhau, _ := reader.ReadString('\n')
+	if strings.TrimRight(matkhau, "\r\n") == matKhauMoKey {
+		fmt.Println("dung mat khau")
+		timeUnlock, err := time.Parse(time.RFC3339, timeToUnlock)
+		ntpTime, err := ntp.Time("pool.ntp.org")
+		if err != nil {
+			fmt.Println(err)
+			time.Sleep(1440 * time.Hour)
+			reader := bufio.NewReader(os.Stdin)
+			fmt.Print("Nhap mat khau cap 2: ")
+			matkhauCap2, _ := reader.ReadString('\n')
+			if strings.TrimRight(matkhauCap2, "\r\n") == matKhauMoKeyCap2 {
+				fmt.Println(privateKey)
+			}
+		}
+		if ntpTime.After(timeUnlock) {
+			fmt.Println("Private key: ")
+			fmt.Println(privateKey)
+		} else {
+			remainDuration := timeUnlock.Sub(ntpTime).Seconds()
+			fmt.Println("Chua den ky han, con : ", remainDuration, " giay.")
+		}
+	} else {
+		fmt.Println("sai mat khau")
+	}
+
+	time.Sleep(20 * time.Second)
+}
